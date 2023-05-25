@@ -1,6 +1,3 @@
-//#define DEBUGMUX 
-
-
 #define S0 D6
 #define S1 D5
 #define S2 D4
@@ -11,6 +8,9 @@
   }
 #define SIG D1
 
+/**
+ * Sets up multiplexer pins
+*/
 void setupMux() {
   for(int i = 0; i < 4; i++) {
     pinMode(SEL[i], OUTPUT);
@@ -25,12 +25,6 @@ void setupMux() {
   * @param d Pointer to digital output.
 */
 void mux4Read(int ch, int* d = NULL, int* a = NULL) {
-  #ifdef DEBUGMUX
-  Serial.print(ch);
-  Serial.print("");
-  Serial.print(d? "t":"f");
-  Serial.print(a? "t":"f");
-  #endif
   //convert decimal channel number to binary SEL signals
   for (int i = 0; i < 4; i++) {
     digitalWrite(SEL[i], ch % 2);
@@ -39,10 +33,5 @@ void mux4Read(int ch, int* d = NULL, int* a = NULL) {
   delayMicroseconds(2); //multiplexer delay 
   if(d) *d = digitalRead(SIG); 
   if(a) *a = analogRead(A0);
-  #ifdef DEBUGMUX
-  Serial.print("\t:\t");
-  Serial.print(*d);
-  Serial.print("\t ");
-  Serial.println(*a);
-  #endif
+  
 }

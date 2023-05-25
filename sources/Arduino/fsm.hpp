@@ -1,7 +1,12 @@
 #include "communication.hpp"
-//Async button with debouncing (supposing button is pulled up) 
+/**
+ * Components (Button, Rotary Encoder, Potentiometer) modelled as 
+ * Finite State Machines
+*/
+
+// Async button handler class with debouncing (supposing button is pulled up) 
 class Button { 
-    int idx;
+    int idx; 
     uint8_t channel; 
     int state; 
     int lastState;
@@ -98,4 +103,3 @@ void Button::nextState(int reading) {
   } 
   lastState = reading;
 }
-

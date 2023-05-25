@@ -15,6 +15,9 @@ enum Component {
   POT
 };
 
+/**
+ * Sends state changes of components through the Serial port
+*/
 class Message {
   GESTURES gesture;
   Component component; 
@@ -40,6 +43,5 @@ public:
 const char * const Message::componentNames[] = {"BTN", "ROT", "POT"};
 const char * const Message::gestureNames[] = {"prs", "rel", "inc", "dec", "rot"};
 
-//Handles states of all components
 
 #endif // COMMUNICATION_H
