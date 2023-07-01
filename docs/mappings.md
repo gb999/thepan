@@ -14,10 +14,21 @@
 # Fruity Delay 3 Control Mappings
 | Encoder Idx               | 1             | 2               | 3                   | 4                       | 5                |
 | ------------------------- | ------------- | --------------- | ------------------- | ----------------------- | ---------------- |
-| Button Press              | Tempo sync    | Stereo Offset   | Keep Pitch          | -                       | Limit/Sat        |
-| Rotate                    | Time (step)   |-                | Feedback Level      | SMP Rate                | Diffusion LVL    |
+| Button Press              | Tempo sync    | -               | Keep Pitch          | -                       | Limit/Sat        |
+| Rotate                    | Time (step)   | Stereo Offset   | Feedback Level      | SMP Rate                | Diffusion LVL    |
 | Hold and rotate           | Time (smooth) | -               | Feedback Cutoff     | Bits                    | Diffusion Spread |
-| Double press then rotate  | -             |  -              |Feedback Filter mode |   -                     |-                 |
+| Double press then rotate  | Out Wet Level | Delay Model     |Feedback Filter mode |   -                     |-                 |
 | Double press, hold rotate | -             |   -             | -                   |     -                   | -                |
 | Alt + rotate              | Mod Time      | Smoothing       |              -      | Distortion level        |-                 |
-| Alt + hold + rotate       | Mod Rate      | Delay Model(+1) | Feedback Cutoff Mod | Distortion knee         |Feedback Resonance |
+| Alt + hold + rotate       | Mod Rate      | -               | Feedback Cutoff Mod | Distortion knee         |Feedback Resonance|
+
+
+# Fruity Reeverb 2 Mappings
+| Encoder Idx | 1 | 2 | 3 | 4 | 5 |
+|-|-|-|-|-|-|
+| Rotate                   | Decay     | Size | Diffusion | Wet Level | High Cut |
+| Hold and Rotate          |   -       | Delay| -         |  -        | Low Cut  |         
+| Double press then rotate | -         | -    | -         | -         | -        |
+| Alt + rotate             | Mod Time  | -    | -         | -         | -        |  
+| Alt + hold + rotate      | Mod speed | -    | -         | -         | -        |
+
