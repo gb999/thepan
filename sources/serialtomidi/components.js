@@ -1,122 +1,94 @@
+const fs = require("fs");
+const {doublepressinterval, longpressinterval} = JSON.parse(fs.readFileSync("./config.json")).timings;
+
+class Event {
+    constructor(component, data = undefined, name = undefined)  {
+        this.component = component;
+        this.time = Date.now();
+        this.data = data; 
+        this.name = name;
+        this.state = "pending"; // "pending" | "done" | "ignored" (occurs when an other Event modifies the meaning)
+    }
+
+}
+
 class Button {
-    static doublePressTime = 250;
-    
-    static DOUBLEPRESSP = 0; 
-    static DOUBLEPRESSR = 1; 
-    static PRESSP = 2; 
-    static PRESSR = 3;
-    static HANDLED = -1;
-    
     
     constructor(idx) {
         this.idx = idx;
-        this.pressed = 0;
-        this.lastPressTime = 0;
-        this.lastReleaseTime = 0;
-        this.event = Button.HANDLED;
-    }
-    static alt = Button;
-    /**
-     * 
-     * @param {string} s input state 
-     */
-    nextState(s) {
-        let result = -1;
-        if(s == "prs") { //PRESS
-            if(!this.pressed) {
+        this.pressed = 0;   
+        this.lastTimePressed = 0;     
+        this.lastTimeReleased = 0;     
 
-                if(Date.now() - this.lastPressTime <= Button.doublePressTime) {
-                    //Double Press Event Triggered By Press
-                    result = Button.DOUBLEPRESSP;
-                } else {
-                    result = Button.PRESSP;
+        this.event = "singlerelease";
+    }
+
+    setState(data) {
+        const currentTime = Date.now();
+        let name = "";
+        let dt = currentTime - this.lastTimePressed;
+        if(this.pressed == 0) { // Button was not pressed
+            if(data == 1) { // Button is pressed now
+                // Single or double press
+                if(dt > doublepressinterval) 
+                {
+                    name = "singlepressp";
+                    this.event = "singlepress";
+                } else if (currentTime - this.lastTimeReleased < longpressinterval){
+                    name = "doublepressp";
+                    this.event = "doublepress";
                 }
+                this.lastTimePressed = currentTime;          
             }
-            this.pressed = true;
-            this.lastPressTime = Date.now();
-        } else { //RELEASE
-            if(this.pressed) {
-                if(Date.now() - this.lastPressTime <= Button.doublePressTime 
-                && Date.now() - this.lastReleaseTime <= Button.doublePressTime) {
-                    //Double Press Event Triggered By Release
-                    result = Button.DOUBLEPRESSR;
+        } else { //Button was pressed
+            if(data == 0) {
+                // Button was released 
+                if(dt < longpressinterval && currentTime - this.lastTimeReleased < doublepressinterval ) {
+                    name = "doublepressr";
+                    this.event = "doublerelease";
+
                 } else {
-                    //Single Press Event Triggered By Release
-                    result = Button.PRESSR;
+                    name = "singlepressr";
+                    this.event = "singlerelease";
                 }
+                this.lastTimeReleased = currentTime;
             }
-            this.pressed = false;
-            this.lastReleaseTime = Date.now();
         }
-        this.event = result;
+        this.pressed = data;
+        return new Event(this, this.pressed, name);
     }
 }
 
 class RotaryEncoder {
-    static BANDTYPECHANGE = 0;
     constructor(idx) {
         this.idx = idx;
-        this.counter = 0; //
-        this.button = new Button(idx);
-        this.event;
-
+        this.counter = 0;
+        this.velocity = 0;
+        this.lastEventTime = 0;
+ 
     }
-    nextState(s, midiout) { // s: inc/dec
-        // BAND TYPE CHANGE
-        if (this.button.event == Button.DOUBLEPRESSR 
-            && this.event != RotaryEncoder.BANDTYPECHANGE) {
-
-            this.event = RotaryEncoder.BANDTYPECHANGE;
-            this.button.event = Button.HANDLED;
-            //console.log("Band type change start")
-
-        } 
-        if(this.button.event == Button.DOUBLEPRESSR 
-            && this.event == RotaryEncoder.BANDTYPECHANGE ) {
+    setState(data) {
+        this.counter += data;
+        let currentTime = Date.now();
+        let dt = currentTime - this.lastEventTime;
+        this.velocity = Math.max(-1, Math.min(data / (1 + dt), 1)); // (1+dt => no division by 0)
+        this.lastEventTime = currentTime;
         
-            this.event = RotaryEncoder.HANDLED;
-            this.button.event = Button.HANDLED;
-            // console.log("Band type change end")
-        }
-        if(this.event == RotaryEncoder.BANDTYPECHANGE) {
-            // console.log("Band Type change");
-            midiout.sendMessage([0xB0, s == "inc" ? 0x60:0x61, this.idx+15]);
-            
-        }
+        return new Event(this, {velocity: this.velocity});
         
-        if(this.button.event == Button.DOUBLEPRESSP && this.event != RotaryEncoder.BANDTYPECHANGE) {
-            // console.log("ORDER")
-            midiout.sendMessage([0xB0, s == "inc" ? 0x60:0x61, this.idx+10]);
-        }
-        
-        if(this.button.event != Button.DOUBLEPRESSP && this.button.pressed ) {
-            // console.log("BAND WIDTH CHANGE")
-            midiout.sendMessage([0xB0, s == "inc" ? 0x60:0x61, this.idx+5]);
-
-        }
-
-        if(Button.alt.pressed && 
-            (this.button.event == Button.HANDLED || this.button.event == Button.PRESSR)
-            && this.event == RotaryEncoder.HANDLED) {
-                
-            //HAVE TO IMPLEMENT SMOOTH CHANGE
-            midiout.sendMessage([0xB0, s == "inc" ? 0x60:0x61, this.idx]);
-            //console.log("SMOOTH")
-        }
-
-        if(!Button.alt.pressed && 
-            (!this.button.pressed && this.button.event == Button.HANDLED || this.button.event == Button.PRESSR)
-             && this.event == RotaryEncoder.HANDLED) {
-            // console.log("gain")
-
-            midiout.sendMessage([0xB0, s == "inc" ? 0x60:0x61, this.idx]);
-
-        }
-
     }
 }
 
-module.exports = {
-    Button,
-    RotaryEncoder
+class Pot {
+    constructor(idx) {
+        this.idx = idx;
+        this.value = 0;
+    }
+    setState(data) {
+        this.value = data;
+        return new Event(this, data);
+    }
+
 }
+
+module.exports = {Button, RotaryEncoder, Pot};

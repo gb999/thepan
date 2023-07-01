@@ -1,5 +1,5 @@
 # The Pan
-## From a pan to a MIDI controller
+## From pan to a MIDI controller
 I was cooking pancakes for dinner on a peaceful evening. It was going well, half of the pancakes were done. Then I tried to flip the next pancake...
 And suddenly I found the handle of the pan in my hand. **Without the pan!** *Revenge had to be served...*
 
