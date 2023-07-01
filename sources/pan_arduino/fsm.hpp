@@ -18,7 +18,7 @@ public:
   Button(uint8_t channel = 0, int idx = 0):channel(channel), state(0),debounceDelay(10), idx(idx) {}
   uint8_t getChannel() {return channel;};
   int getState() {return state;};
-  int* getStateRef() {return &state;};
+  //int* getStateRef() {return &state;};
 
   void nextState(int reading); //Sets state based on input
 };
@@ -39,15 +39,16 @@ public:
   int* getStateRefB() {return &stateB;};
 
   void nextState(int A, int B) { // A,B: reading of A,B ch
+
     if(A != stateA) {
       if(A == B && (state == CW || state == RDY)) {
         state = CW;
         time = millis();
-        Message(ROT, idx, increment);
+        Message(ROT, idx, +1);
       } else if (A != B && (state == CCW || state == RDY)) {
         state = CCW;
         time = millis();
-        Message(ROT, idx, decrement);
+        Message(ROT, idx, -1);
       }
       stateA = A;
     }
@@ -66,7 +67,7 @@ class Pot {
   int state; // Pot value filtered with EMA
   int lastState = 0; // Pot value
 
-  float a = 0.2; // alpha value for  EMA (0.3)
+  float a = 0.9; // alpha value for  EMA (0.3)
 public: 
   Pot(uint8_t channel = 0, int idx = 0):channel(channel), state(0),idx(idx) {};
   int* getStateRef() {return &state;}
@@ -77,7 +78,7 @@ public:
   void nextState(int reading) {
     state = (a * reading) + ((1-a) * state);
     if(state/8 != lastState/8) {
-      Message(POT, idx, rotate, state) ;
+      Message(POT, idx, state) ;
     }
     lastState = state;
   }
@@ -94,9 +95,9 @@ void Button::nextState(int reading) {
       if(state == LOW) {
         //Triggers on button down
         lastTimePressed = millis();
-        Message(BTN, idx, press);
+        Message(BTN, idx, 1);
       } else  {
-        Message(BTN, idx, release);
+        Message(BTN, idx, 0);
       }
     } else { // No state change
     }
