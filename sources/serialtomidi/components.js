@@ -71,7 +71,7 @@ class RotaryEncoder {
         this.counter += data;
         let currentTime = Date.now();
         let dt = currentTime - this.lastEventTime;
-        this.velocity = Math.max(-1, Math.min(data / (1 + dt), 1)); // (1+dt => no division by 0)
+        this.velocity = Math.max(-1, Math.min(data / (dt+1), 1)); // (1+dt => no division by 0)
         this.lastEventTime = currentTime;
         
         return new Event(this, {velocity: this.velocity});

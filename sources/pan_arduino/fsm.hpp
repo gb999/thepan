@@ -18,7 +18,6 @@ public:
   Button(uint8_t channel = 0, int idx = 0):channel(channel), state(0),debounceDelay(10), idx(idx) {}
   uint8_t getChannel() {return channel;};
   int getState() {return state;};
-  //int* getStateRef() {return &state;};
 
   void nextState(int reading); //Sets state based on input
 };
@@ -31,34 +30,37 @@ class RotEnc {
   enum State {CW,CCW,RDY};
   State state; // CLOCKWISE COUNTERCLOCKWISE, READY
   int stateA, stateB;
+
 public:
-  RotEnc(uint8_t Achannel=0, uint8_t Bchannel=0,int idx = 0):Achannel(Achannel), Bchannel(Bchannel), state(RDY), time(0), delay(50),idx(idx) {}
+  RotEnc(uint8_t Achannel=0, uint8_t Bchannel=0,int idx = 0):Achannel(Achannel), Bchannel(Bchannel), state(RDY), time(0), delay(25),idx(idx) {}
   uint8_t getChannelA() {return Achannel;};
   uint8_t getChannelB() {return Bchannel;};
-  int* getStateRefA() {return &stateA;};
-  int* getStateRefB() {return &stateB;};
 
   void nextState(int A, int B) { // A,B: reading of A,B ch
+    unsigned int currentTime = millis(); 
 
     if(A != stateA) {
+      unsigned int dt = currentTime - time;
       if(A == B && (state == CW || state == RDY)) {
         state = CW;
-        time = millis();
-        Message(ROT, idx, +1);
+        if(dt >= delay) {
+          Message(ROT, idx, +1);
+          time = currentTime;
+        }
       } else if (A != B && (state == CCW || state == RDY)) {
         state = CCW;
-        time = millis();
-        Message(ROT, idx, -1);
+        if(dt >= delay) {
+          Message(ROT, idx, -1);
+          time = currentTime;
+        }
       }
       stateA = A;
     }
+  state = RDY;
+  
+ 
 
-    if(millis() > time + delay) {
-      time+=delay; 
-      state = RDY;
-    }
   }
-
 };
 
 class Pot {
@@ -67,10 +69,9 @@ class Pot {
   int state; // Pot value filtered with EMA
   int lastState = 0; // Pot value
 
-  float a = 0.9; // alpha value for  EMA (0.3)
+  float a = 0.6; // alpha value for  EMA (0.3)
 public: 
   Pot(uint8_t channel = 0, int idx = 0):channel(channel), state(0),idx(idx) {};
-  int* getStateRef() {return &state;}
  
   int to7Bit() const {return state/8; } 
 

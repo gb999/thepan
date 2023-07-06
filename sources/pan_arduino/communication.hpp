@@ -22,6 +22,7 @@ public:
     Serial.print(id);
     Serial.print(" ");
     Serial.println(state);
+    Serial.flush();
   };
   Message(Component component, int id, int state=0):component(component), id(id), state(state) {
     send();

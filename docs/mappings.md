@@ -1,3 +1,9 @@
+# Storing mappings for a plugin
+Mapping: Gesture --> (Parameter Index, Step Count)  
+If step count is 0, change value should be equal to velocity / 128, otherwise change value should be 1 / (Step Count - 1)
+
+
+
 # Fruity Parametric EQ 2 Control Mappings
 | Encoder Idx | 1-5 |
 | ------------| --- |

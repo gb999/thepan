@@ -60,8 +60,7 @@ class Pan {
         let button = this.buttons[i];
         
 
-        let msgval = 64 + event.data.velocity*64;
-
+        let msgval = 64 + +Math.round(event.data.velocity*63) + Math.sign(event.data.velocity);
 
         const CC = 0xB0;
         let CONTROLLERNUM = 0x0E+4-i;
@@ -95,7 +94,6 @@ class Pan {
         }
         
         const message = [CC, CONTROLLERNUM, msgval]
-        console.log(event.data.velocity)
         
         /*if(this.altPressed) {
             
