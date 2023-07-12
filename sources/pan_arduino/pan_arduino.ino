@@ -19,7 +19,7 @@ uint8_t encChannelsA[] = {1, 5, 8, 10, 13};
 uint8_t encChannelsB[] = {0, 4, 7, 11, 14};
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(460800);
   setupMux();
 
   for(int i = 0; i < 6; i++) 

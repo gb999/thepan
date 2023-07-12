@@ -30,7 +30,7 @@ void mux4Read(int ch, int* d = NULL, int* a = NULL) {
     digitalWrite(SEL[i], ch % 2);
     ch /= 2;
   }
-  delayMicroseconds(2); //multiplexer delay 
+  delayMicroseconds(1); //multiplexer delay 
   if(d) *d = digitalRead(SIG); 
   if(a) *a = analogRead(A0);
   

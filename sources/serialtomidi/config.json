@@ -1,6 +1,6 @@
 {
     "serialport": "com3",
-    "baudrate": 115200,
+    "baudrate": 460800,
     "midiportname": "The Pan",
     "timings": {
         "doublepressinterval": 200,
