@@ -106,7 +106,7 @@ class Pan {
     #handleButton(event) {
         const component = event.component;
         let idx = component.idx < 5 ? 4 - component.idx : component.idx; // Reverse button order 
-        let message = [0x0, idx, 0x7F];
+        let message = [0x00, idx, 0x7F];
         if(component.pressed == 1) {
             message[0] = 0x90; // NOTEON
         }

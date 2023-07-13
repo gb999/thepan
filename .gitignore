@@ -3,3 +3,4 @@ sources/serialtomidi/package.json
 sources/serialtomidi/package-lock.json
 sources/serialtomidi/node_modules/
 sources/serialtomidi/rotaryencodergestures.puml
+sources/serialtomidi/run.bat
