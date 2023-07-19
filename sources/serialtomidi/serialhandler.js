@@ -1,7 +1,7 @@
 const Pan = require("./pan.js");
 
 const SerialHandler = (msg) => {
-    console.log(msg)
+    //console.log(msg)
     // Split message by spaces <componentType> <index> <data>
     let [componentType, idx, data] = msg.trim().split(/\s/);
     // Switch by component type

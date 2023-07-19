@@ -4,3 +4,4 @@ sources/serialtomidi/package-lock.json
 sources/serialtomidi/node_modules/
 sources/serialtomidi/rotaryencodergestures.puml
 sources/serialtomidi/run.bat
+sources/serialtomidi/gb99-pan-service.js

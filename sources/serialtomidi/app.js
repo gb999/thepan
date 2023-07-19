@@ -16,7 +16,7 @@ serialport.pipe(serialParser);
 
 // Listen to serial port
 serialport.on("open", ()=> {
-    console.log("Serial port open.");
+    //console.log("Serial port open.");
 })
 
 const serialHandler = require("./serialhandler.js");
@@ -32,6 +32,14 @@ const midiout = new midi.Output();
 
 
 // Run loopMIDI sync
+const { execFile } = require('node:child_process');
+const loopMIDI_Process = execFile(CONFIG.loopmidi_location, (error, stdout, stderr) => {
+  if (error) {
+    throw error;
+  }
+  console.log(stdout);
+}); 
+
 
 const findPortIndex = (midiio) => {
     const portcount = midiio.getPortCount();
@@ -42,18 +50,25 @@ const findPortIndex = (midiio) => {
     }
     return -1;
 }
-const MIDIINPORTINDEX = findPortIndex(midiin);
-const MIDIOUTPORTINDEX = findPortIndex(midiout);
 
 
-if(MIDIINPORTINDEX == -1 || MIDIOUTPORTINDEX == -1) throw new Error("Could not find MIDI I/O ports named " + CONFIG.midiportname + "Were they created with loopMIDI?");
+loopMIDI_Process.on("spawn", ()=> {
 
-// Open MIDI ports
-midiin.openPort(MIDIINPORTINDEX);
-midiout.openPort(MIDIOUTPORTINDEX);
+    setTimeout(()=>{},3000)
+    const MIDIINPORTINDEX = findPortIndex(midiin);
+    const MIDIOUTPORTINDEX = findPortIndex(midiout);
+    
+    
+    if(MIDIINPORTINDEX == -1 || MIDIOUTPORTINDEX == -1) throw new Error("Could not find MIDI I/O ports named " + CONFIG.midiportname + "Were they created with loopMIDI?");
+    
+    // Open MIDI ports
+    midiin.openPort(MIDIINPORTINDEX);
+    midiout.openPort(MIDIOUTPORTINDEX);
+    
+    const Pan = require("./pan.js");
+    Pan.midiOutStream = midiout;
+})
 
-const Pan = require("./pan.js");
-Pan.midiOutStream = midiout;
 
 // Listen to MIDI In messages 
 /*midiin.on("message", (deltaTime, message) => {

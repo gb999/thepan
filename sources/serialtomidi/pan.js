@@ -73,31 +73,23 @@ class Pan {
         
         if(button.event == "doublerelease") {
             CONTROLLERNUM +=5;
-            //step mode
-
-            /*if(event.data.velocity>=0.8) //Skip steps if too fast
-                return;
-            event.data.velocity /= Math.abs(event.data.velocity)*/
-            
+            //step mode            
         }
         
         if(button.event == "singlepress" ) {
             CONTROLLERNUM +=10;
             
-            console.log("holdrotate")
+            //console.log("holdrotate")
         }
         
         
         if(button.event == "doublepress") {
             CONTROLLERNUM+=15
-            console.log("doubleholdrotate")
+            //console.log("doubleholdrotate")
         }
         
         const message = [CC, CONTROLLERNUM, msgval]
         
-        /*if(this.altPressed) {
-            
-        }*/
 
         this.midiOutStream.sendMessage(message)
         event.state = "discarded";
@@ -132,11 +124,11 @@ class Pan {
                     this.#handlePot(event);
                 break;
                 case "Button": 
-                {
+                
                     this.#handleButton(event);
                     
                     
-                }
+                
                 break;    
                 case "RotaryEncoder":
                     this.#handleEncoder(event);

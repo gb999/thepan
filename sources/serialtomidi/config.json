@@ -5,5 +5,6 @@
     "timings": {
         "doublepressinterval": 200,
         "longpressinterval": 300 
-    }
+    },
+    "loopmidi_location": "C:\\Program Files (x86)\\Tobias Erichsen\\loopMIDI\\loopMIDI.exe"
 }
