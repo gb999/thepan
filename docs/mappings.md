@@ -1,8 +1,8 @@
-# Storing mappings for a plugin
-Mapping: Gesture --> (Parameter Index, Step Count)  
-If step count is 0, change value should be equal to velocity / 128, otherwise change value should be 1 / (Step Count - 1)
+# Mapping Encoder Gestures to plugins
+The [python script](../sources/fl_script) shows a few examples, how a mapping of gestures to plugin parameters can be implemented. The gestures, when not handled by a mapping can be linked to parameters in FL Studio and they can increment or decrement values of parameters.
+Also see [FL Studio MIDI Scripting for more info.](https://www.image-line.com/fl-studio-learning/fl-studio-online-manual/html/midi_scripting.htm )
 
-
+Here are two implemented mappings for **Fruity Parametric EQ 2** and **Fruity Delay 3** and a suggested mapping for **Fruity Reeverb 2**.
 
 # Fruity Parametric EQ 2 Control Mappings
 | Encoder Idx | 1-5 |
@@ -12,9 +12,9 @@ If step count is 0, change value should be equal to velocity / 128, otherwise ch
 | Double press then rotate | Band Type |
 | Double press and rotate | Band Order |
 
-| Pot Idx| 1-5    |
-|-|-|
-| Rotate | Frequency|
+| Pot Idx | 1-5       |
+| ------- | --------- |
+| Rotate  | Frequency |
 
 
 # Fruity Delay 3 Control Mappings
