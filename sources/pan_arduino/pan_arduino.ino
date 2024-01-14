@@ -1,7 +1,10 @@
 #include "fsm.hpp"
 #include "mux.hpp"
 #include "communication.hpp"
+#include <serial-readline.h>
 
+void received(char*);
+SerialLineReader reader(Serial, received); 
 
 
 int AReadings[16] = {0};
@@ -9,17 +12,19 @@ int DReadings[16] = {0};
 
 
 Button buttons[6];
-uint8_t buttonChannels[] = {2,3,6,9,12,15};
+uint8_t buttonChannels[] = {12,9,6,3,2,15};
 
 Pot pots[5];
-uint8_t potChannels[] = {0,1,2,3,4,5}; 
+uint8_t potChannels[] = {4,3,2,1,0}; 
 
 RotEnc encoders[5];
-uint8_t encChannelsA[] = {1, 5, 8, 10, 13};
-uint8_t encChannelsB[] = {0, 4, 7, 11, 14};
+uint8_t encChannelsA[] = {13, 10, 8, 5, 1};
+uint8_t encChannelsB[] = {14, 11, 7, 4, 0};
+
+bool connected = false;
 
 void setup() {
-  Serial.begin(460800);
+  Serial.begin(115200);
   setupMux();
 
   for(int i = 0; i < 6; i++) 
@@ -37,20 +42,34 @@ void setup() {
 
 
 void loop() {
-  // Read all multiplexer channels 
-  for(int i = 0; i < 16; i++) {
-    int j = ((i % 2) * (i + 8) + (i+1) % 2 * i)%16 ; //Keeps a distance of 7 pins between readings
-    mux4Read(j, &DReadings[j], &AReadings[j]);
-  }
+  reader.poll();
 
-  // Update state of all components
-  for(int i = 0; i < 6; i++) {
-    buttons[i].nextState(DReadings[buttonChannels[i]]);
-  }
-  for(int i = 0; i < 5; i++) {
-    pots[i].nextState(AReadings[potChannels[i]]);
-  }
-  for(int i = 0; i < 5; i++) {
-    encoders[i].nextState(DReadings[encChannelsA[i]], DReadings[encChannelsB[i]]);
+  if (connected) {
+  // Read all multiplexer channels 
+    for(int i = 0; i < 16; i++) {
+      int j = ((i % 2) * (i + 8) + (i+1) % 2 * i)%16 ; //Keeps a distance of 7 pins between readings
+      mux4Read(j, &DReadings[j], &AReadings[j]);
+    }
+
+    // Update state of all components
+    for(int i = 0; i < 6; i++) {
+      buttons[i].nextState(DReadings[buttonChannels[i]]);
+    }
+    for(int i = 0; i < 5; i++) {
+      pots[i].nextState(AReadings[potChannels[i]]);
+    }
+    for(int i = 0; i < 5; i++) {
+      encoders[i].nextState(DReadings[encChannelsA[i]], DReadings[encChannelsB[i]]);
+    } 
   } 
+}
+
+
+void received(char* msg) {
+  if (String(msg) == "Who are you?") {
+    Serial.println("I am The Pan");
+    connected = true;
+  } else if(String(msg) == "Disconnect") {
+    connected = false;
+  }
 }

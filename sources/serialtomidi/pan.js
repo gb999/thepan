@@ -49,9 +49,6 @@ class Pan {
         let data = Math.floor(1024-event.data); 
         
         this.midiOutStream.sendMessage([0xB0, 0x66+4-i, Math.floor(data/8)]); // Data Entry MSB
-
-
-
         event.state = "discarded";
         
     }
@@ -124,27 +121,17 @@ class Pan {
                     this.#handlePot(event);
                 break;
                 case "Button": 
-                
                     this.#handleButton(event);
-                    
-                    
-                
                 break;    
                 case "RotaryEncoder":
                     this.#handleEncoder(event);
-                     
-                    
                 break;
-                    
-                
                 default: // This should never execute 
                 throw new Error("Unknown component");
                 
             }
             if(event.state == "discarded") 
                 this.EventQueue.splice(i,1);    
-                            
-                
         }
     }
 

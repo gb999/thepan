@@ -1,0 +1,13 @@
+[port]
+serial_port_name = "com3"
+serial_port_baudrate = 115200
+virtual_midi_port_name = "The Pan"
+
+
+[loopmidi]
+path = "C:\\Program Files (x86)\\Tobias Erichsen\\loopMIDI\\loopMIDI.exe"
+
+
+[device_timings]
+short_press_interval = 200
+long_press_interval = 300
