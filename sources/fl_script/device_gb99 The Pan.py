@@ -261,6 +261,8 @@ class TPan():
 			if mapping == None:
 				device.processMIDICC(event)
 				return
+			else: 
+				return
 
 
 		elif event.midiId == midi.MIDI_NOTEOFF:
@@ -271,7 +273,6 @@ class TPan():
 				Pan.altPressed = False
 			else:
 				self.isButtonPressed[buttonIdx] = False
-
 				if not self.wasRotated[buttonIdx]:
 					# handle button release
 					gesture_idx = Pan.BUTTON_GESTURE_OFFSET + 0
@@ -283,14 +284,14 @@ class TPan():
 				if mapping == None:
 					device.processMIDICC(event)
 					return
+				else:
+					return
 
 		elif event.midiId == midi.MIDI_CONTROLCHANGE:
 			# Let FL Studio handle potentiometers 
 			if event.data1 >= POT_BASE_IDX and event.data1 < POT_BASE_IDX + 5: 
 				event.handled = False
 				return
-			
-
 			
 			# Get encoder idx
 			encoder_idx = (event.data1 - ENCODER_BASE_IDX) % 5 
@@ -318,7 +319,6 @@ class TPan():
 				newVal = channels.incEventValue(eventId, velocity, 1/64)
 				general.processRECEvent(eventId, newVal, REC_Control | REC_UpdateControl)
 				return
-		
 
 			
 

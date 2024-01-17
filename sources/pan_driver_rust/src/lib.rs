@@ -58,17 +58,10 @@ impl Button {
                 self.last_time_released = timestamp;
                 ButtonState::DoubleReleased
             }
-
             ButtonState::SingleReleased => {
                 self.last_time_pressed = timestamp;
-                if timestamp
-                    .duration_since(self.last_time_pressed)
-                    .unwrap_or_default()
-                    < Duration::from_millis(200)
-                    && timestamp
-                        .duration_since(self.last_time_released)
-                        .unwrap_or_default()
-                        < Duration::from_millis(300)
+                if timestamp.duration_since(self.last_time_pressed).unwrap_or_default() < Duration::from_millis(200)
+                    && timestamp.duration_since(self.last_time_released).unwrap_or_default() < Duration::from_millis(300)
                 {
                     ButtonState::DoublePressed
                 } else {

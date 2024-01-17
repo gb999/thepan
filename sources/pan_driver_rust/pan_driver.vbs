@@ -1,0 +1,1 @@
+CreateObject("WScript.Shell").Run """E:\gb99\gb99\Projects\thepan\sources\pan_driver_rust\The Pan Driver.lnk""", 0, False

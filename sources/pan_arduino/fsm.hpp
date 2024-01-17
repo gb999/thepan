@@ -32,7 +32,7 @@ class RotEnc {
   int stateA, stateB;
 
 public:
-  RotEnc(uint8_t Achannel=0, uint8_t Bchannel=0,int idx = 0):Achannel(Achannel), Bchannel(Bchannel), state(RDY), time(0), delay(25),idx(idx) {}
+  RotEnc(uint8_t Achannel=0, uint8_t Bchannel=0,int idx = 0):Achannel(Achannel), Bchannel(Bchannel), state(RDY), time(0), delay(40),idx(idx) {}
   uint8_t getChannelA() {return Achannel;};
   uint8_t getChannelB() {return Bchannel;};
 
@@ -78,10 +78,11 @@ public:
   //Exponential Moving Average (EMA)
   void nextState(int reading) {
     state = (a * reading) + ((1-a) * state);
-    if(state/8 != lastState/8) {
+    if(abs(state - lastState) > 10 ) { // Hysteresis
       Message(POT, idx, state) ;
+      lastState = state;
     }
-    lastState = state;
+    
   }
 };
 
